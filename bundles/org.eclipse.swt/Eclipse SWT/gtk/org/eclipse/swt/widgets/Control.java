@@ -194,11 +194,7 @@ void drawBackground (Control control, long gdkResource, long cr, int x, int y, i
 			cairo_rectangle_int_t regionRect = new cairo_rectangle_int_t ();
 			int [] fetchedHeight = new int [1];
 			int [] fetchedWidth = new int [1];
-			if (GTK.GTK4) {
-				gdk_surface_get_size(gdkResource, fetchedWidth, fetchedHeight);
-			} else {
-				gdk_window_get_size(gdkResource, fetchedWidth, fetchedHeight);
-			}
+			gdk_surface_get_size(gdkResource, fetchedWidth, fetchedHeight);
 			regionRect.x = 0;
 			regionRect.y = 0;
 			regionRect.width = fetchedWidth[0];
@@ -5183,6 +5179,9 @@ void setBackground () {
  * <p>
  * Note: This operation is a hint and may be overridden by the platform.
  * </p>
+ * <p>
+ * Note: The background color can be overridden by setting a background image.
+ * </p>
  * @param color the new color (or null)
  *
  * @exception IllegalArgumentException <ul>
@@ -5287,6 +5286,9 @@ void setBackgroundGdkRGBA (long handle, GdkRGBA rgba) {
  * <p>
  * Note: This operation is a hint and may be overridden by the platform.
  * For example, on Windows the background of a Button cannot be changed.
+ * </p>
+ * <p>
+ * Note: Setting a background image overrides a set background color.
  * </p>
  * @param image the new image (or null)
  *
