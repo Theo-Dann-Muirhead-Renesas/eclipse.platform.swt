@@ -2538,7 +2538,7 @@ void gesturePressReleaseProc(long gesture, int n_press, double x, double y, long
 	long sequence = GTK4.gtk_gesture_get_last_updated_sequence(gesture);
 
 	int result = GTK4.GTK_EVENT_SEQUENCE_NONE;
-
+	
 	switch ((int)user_data) {
 		case GESTURE_PRESSED:
 			result = gtk_gesture_press_event(gesture, n_press, x, y, event);

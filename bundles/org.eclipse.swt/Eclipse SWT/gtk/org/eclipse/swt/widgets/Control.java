@@ -3427,8 +3427,11 @@ int gtk_gesture_press_event (long gesture, int n_press, double x, double y, long
 				}
 			}
 		}
-	} else if (n_press == 2) {
+	} else if (n_press >= 2) {
 		boolean cancelled = sendMouseEvent(SWT.MouseDoubleClick, eventButton, n_press, 0, false, eventTime, x, y, false, eventState);
+		if (cancelled) {
+			cancelled = sendMouseEvent(SWT.MouseDown, eventButton, n_press, 0, false, eventTime, x, y, false, eventState);
+		}
 		if (!cancelled) {
 			result = GTK4.GTK_EVENT_SEQUENCE_CLAIMED;
 		}
@@ -3451,7 +3454,7 @@ int gtk_gesture_release_event (long gesture, int n_press, double x, double y, lo
 	lastInput.x = (int) eventX[0];
 	lastInput.y = (int) eventY[0];
 	if (containedInRegion(lastInput.x, lastInput.y)) return GTK4.GTK_EVENT_SEQUENCE_NONE;
-	boolean cancelled = sendMouseEvent(SWT.MouseUp, eventButton, display.clickCount, 0, false, eventTime, 0, 0, false, eventState);
+	boolean cancelled = sendMouseEvent(SWT.MouseUp, eventButton, display.clickCount, 0, false, eventTime, x, y, false, eventState);
 	int result = GTK4.GTK_EVENT_SEQUENCE_NONE;
 	if (!cancelled) {
 		result = GTK4.GTK_EVENT_SEQUENCE_CLAIMED;
@@ -5133,6 +5136,11 @@ private boolean sendOrPost(int type, Event event) {
 		sendEvent (type, event);
 		if (isDisposed ()) return false;
 	} else {
+		if(event.type == 3) {
+			System.err.println("Control SendOrPostEvent Down");
+		} else if (event.type == 4) {
+			System.err.println("Control SendOrPostEvent Up");
+		}
 		postEvent (type, event);
 	}
 	return event.doit;

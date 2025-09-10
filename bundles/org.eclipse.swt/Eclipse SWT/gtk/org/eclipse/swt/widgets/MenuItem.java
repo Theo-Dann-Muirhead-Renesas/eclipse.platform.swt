@@ -1028,7 +1028,9 @@ public void setID (int id) {
 @Override
 public void setImage (Image image) {
 	//TODO: GTK4 Menu images with text are no longer supported
-	if (GTK.GTK4) return;
+
+	//handle(menuItem) contains boxHandle(boxItem) contains imageHandle and labelHandle
+	//if (GTK.GTK4) return;
 
 	checkWidget();
 	if (this.image == image) return;
@@ -1045,14 +1047,33 @@ private void _setImage (Image image) {
 		if (imageList == null) imageList = parent.imageList = new ImageList ();
 		int imageIndex = imageList.indexOf (image);
 		long surface = 0;
+		long paintable = 0;
 		if (imageIndex == -1) {
 			imageIndex = imageList.add (image);
 			surface = imageList.getSurface (imageIndex);
+			paintable = imageList.getPaintable (imageIndex);
 		} else {
 			imageList.put (imageIndex, image);
 			surface = imageList.getSurface (imageIndex);
+			paintable = imageList.getPaintable (imageIndex);
 		}
+		if (GTK.GTK4) {
+			if (OS.SWT_PADDED_MENU_ITEMS && imageHandle != 0) {
+				//GTK4.gtk_image_set_from_surface(imageHandle, surface);
+				GTK4.gtk_image_set_from_paintable(imageHandle, paintable);
+			} else {
+				if (imageHandle == 0) {
+					GTK4.gtk_image_set_from_paintable(imageHandle, surface);
+					if (imageHandle == 0) error(SWT.ERROR_NO_HANDLES);
 
+					GTK4.gtk_box_append(boxHandle, imageHandle);
+					GTK4.reorder_child_after(boxHandle, imageHandle, 0);
+				} else {
+					GTK4.gtk_image_set_from_paintable(imageHandle, surface);
+				}
+			}
+			return;
+		}
 		if (!GTK3.GTK_IS_MENU_ITEM (handle)) return;
 		if (OS.SWT_PADDED_MENU_ITEMS && imageHandle != 0) {
 			GTK3.gtk_image_set_from_surface(imageHandle, surface);
@@ -1070,6 +1091,21 @@ private void _setImage (Image image) {
 		gtk_widget_show(imageHandle);
 	} else {
 		if (imageHandle != 0) {
+			if (GTK.GTK4) {
+				if (OS.SWT_PADDED_MENU_ITEMS) {
+					GTK4.gtk_box_remove(boxHandle, imageHandle);
+					imageHandle = GTK.gtk_image_new ();
+					if (imageHandle == 0) error (SWT.ERROR_NO_HANDLES);
+					GTK.gtk_image_set_pixel_size (imageHandle, 16);
+					GTK4.gtk_box_append (boxHandle, imageHandle);
+					GTK4.gtk_box_append(boxHandle, labelHandle);
+					gtk_widget_show (imageHandle);
+				} else {
+					GTK4.gtk_box_remove(boxHandle, imageHandle);
+					imageHandle = 0;
+				}
+				return;
+			}
 			if (OS.SWT_PADDED_MENU_ITEMS) {
 				GTK3.gtk_container_remove(boxHandle, imageHandle);
 				imageHandle = GTK.gtk_image_new ();
