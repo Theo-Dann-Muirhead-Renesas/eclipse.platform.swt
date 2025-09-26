@@ -289,6 +289,18 @@ JNIEXPORT void JNICALL GTK4_NATIVE(gdk_1toplevel_1size_1set_1size)
 }
 #endif
 
+#ifndef NO_gsk_1transform_1scale
+JNIEXPORT jlong JNICALL GTK4_NATIVE(gsk_1transform_1scale)
+	(JNIEnv *env, jclass that, jlong arg0, jfloat arg1, jfloat arg2)
+{
+	jlong rc = 0;
+	GTK4_NATIVE_ENTER(env, that, gsk_1transform_1scale_FUNC);
+	rc = (jlong)gsk_transform_scale((GskTransform *)arg0, (float)arg1, (float)arg2);
+	GTK4_NATIVE_EXIT(env, that, gsk_1transform_1scale_FUNC);
+	return rc;
+}
+#endif
+
 #ifndef NO_gtk_1box_1append
 JNIEXPORT void JNICALL GTK4_NATIVE(gtk_1box_1append)
 	(JNIEnv *env, jclass that, jlong arg0, jlong arg1)

@@ -881,4 +881,11 @@ public class GTK4 {
 	 */
 	public static final native long gtk_gesture_get_last_updated_sequence(long gesture);
 
+	/**
+	 * @param transform cast=(GskTransform *)
+	 * @param factor_x cast=(float)
+	 * @param factor_y cast=(float)
+	 */
+	public static final native long gsk_transform_scale(long transform, float factor_x, float factor_y);
+
 }
